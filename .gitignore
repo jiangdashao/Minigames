@@ -1,0 +1,13 @@
+# IntelliJ IDEA Stuff
+/.idea
+Paintball.iml
+*.iml
+*.eml
+
+# Maven Stuff
+/target
+.DS_Store
+# Github stuff
+/.git
+
+dependency-reduced-pom.xml

@@ -1,0 +1,85 @@
+name: Paintball
+version: ${version}
+description: Paintball 16 teams, 9 Game modes, SQL, Stats, Coin Shop, Unlimited arenas, Simultaneous games, Scoreboards
+authors: [Synapz]
+main: me.synapz.paintball.Paintball
+website: http://bit.ly/23QqV4S
+softdepend: [HolographicDisplays, Vault, NoCheatPlus, PlaceholderAPI]
+
+commands:
+   paintball:
+      description: Open the Paintbal command menu.
+      aliases: [pb]
+
+permissions:
+   paintball.*:
+     description: Gives access to all Paintball commands
+     default: op
+     children:
+       paintball.admin: true
+       paintball.arena: true
+       paintball.default: true
+   paintball.admin:
+     description: Gives access to administrative command subsection
+     default: op
+     children:
+       paintball.admin.reload: true
+       paintball.admin.start: true
+       paintball.admin.stop: true
+       paintball.admin.enable: true
+       paintball.admin.disable: true
+       paintball.admin.help: true
+       paintball.admin.remove: true
+       paintball.admin.info: true
+       paintball.admin.setholo: true
+       paintball.admin.delholo: true
+       paintball.admin.reset: true
+       paintball.admin.convert: true
+       paintball.admin.kick: true
+       paintball.admin.addcoin: true
+       paintball.leaderboard.create: true
+       paintball.leave.create: true
+       paintball.join.create: true
+       paintball.autojoin.create: true
+       paintball.spectate.create: true
+       paintball.leave.remove: true
+       paintball.join.remove: true
+       paintball.autojoin.remove: true
+       paintball.leaderboard.remove: true
+       paintball.spectate.remove: true
+       paintball.update: true
+   paintball.arena:
+     description: Gives access to arena setup command subsection
+     default: op
+     children:
+       paintball.arena.steps: true
+       paintball.arena.team: true
+       paintball.arena.setspec: true
+       paintball.arena.min: true
+       paintball.arena.max: true
+       paintball.arena.setlocation: true
+       paintball.arena.rename: true
+       paintball.arena.delspec: true
+       paintball.arena.dellocation: true
+       paintball.arena.setflag: true
+       paintball.arena.delflag: true
+       paintball.arena.create: true
+       paintball.arena.help: true
+   paintball.default:
+     description: Gives access to player subcommand menu
+     default: not op
+     children:
+       paintball.top: true
+       paintball.spectate: true
+       paintball.leave: true
+       paintball.join: true
+       paintball.list: true
+       paintball.stats: true
+       paintball.leaderboard.use: true
+       paintball.join.use: true
+       paintball.autojoin.use: true
+       paintball.leave.use: true
+       paintball.spectate.use: true
+       paintball.wager: true
+       paintball.join.team: true
+       paintball.join.*: true
