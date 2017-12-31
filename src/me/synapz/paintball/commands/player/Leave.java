@@ -11,12 +11,9 @@ import org.bukkit.entity.Player;
 public class Leave extends PaintballCommand {
 
     public void onCommand(Player player, String[] args) {
-        Arena a;
+        Arena a = ArenaManager.getArenaManager().getArena(player);
 
-        try {
-            a = ArenaManager.getArenaManager().getArena(player);
-            a.getName(); // used to see if it returns null
-        }catch (NullPointerException e) {
+        if (a == null) {
             Messenger.error(player, Messages.NOT_IN_ARENA);
             return;
         }

@@ -1,5 +1,6 @@
 package me.synapz.paintball.players;
 
+import me.synapz.paintball.arenas.Arena;
 import me.synapz.paintball.arenas.DOMArena;
 import me.synapz.paintball.enums.Team;
 import me.synapz.paintball.storage.Settings;
@@ -7,6 +8,7 @@ import me.synapz.paintball.utils.Title;
 import me.synapz.paintball.utils.TitleUtil;
 import me.synapz.paintball.utils.Utils;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 public class DOMArenaPlayer extends ArenaPlayer {
 
@@ -17,8 +19,8 @@ public class DOMArenaPlayer extends ArenaPlayer {
 
     private DOMArena domArena = (DOMArena) arena;
 
-    public DOMArenaPlayer(LobbyPlayer lobbyPlayer) {
-        super(lobbyPlayer);
+    public DOMArenaPlayer(Arena arena, Team team, Player player) {
+        super(arena, team, player);
     }
 
     @Override

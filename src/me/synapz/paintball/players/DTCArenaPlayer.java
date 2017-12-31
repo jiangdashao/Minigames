@@ -1,13 +1,16 @@
 package me.synapz.paintball.players;
 
+import me.synapz.paintball.arenas.Arena;
 import me.synapz.paintball.arenas.DTCArena;
+import me.synapz.paintball.enums.Team;
+import org.bukkit.entity.Player;
 
 public class DTCArenaPlayer extends ArenaPlayer {
 
     private DTCArena dtcArena = (DTCArena) arena;
 
-    public DTCArenaPlayer(LobbyPlayer lobbyPlayer) {
-        super(lobbyPlayer);
+    public DTCArenaPlayer(Arena arena, Team team, Player player) {
+        super(arena, team, player);
     }
 
     @Override

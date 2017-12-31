@@ -1,15 +1,17 @@
 package me.synapz.paintball.players;
 
+import me.synapz.paintball.arenas.Arena;
 import me.synapz.paintball.arenas.KCArena;
 import me.synapz.paintball.enums.Team;
 import me.synapz.paintball.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 
 public class KCArenaPlayer extends ArenaPlayer {
 
-    public KCArenaPlayer(LobbyPlayer lobbyPlayer) {
-        super(lobbyPlayer);
+    public KCArenaPlayer(Arena arena, Team team, Player player) {
+        super(arena, team, player);
     }
 
     @Override

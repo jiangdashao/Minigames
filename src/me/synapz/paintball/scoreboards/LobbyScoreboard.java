@@ -24,7 +24,7 @@ public class LobbyScoreboard extends GameScoreboard {
     private final Player player;
 
     public LobbyScoreboard(LobbyPlayer lobbyPlayer) {
-        super(lobbyPlayer.getPlayer());
+        super(lobbyPlayer);
 
         this.lobbyPlayer = lobbyPlayer;
         this.arena = lobbyPlayer.getArena();
@@ -62,7 +62,10 @@ public class LobbyScoreboard extends GameScoreboard {
 
     public void updateNametags() {
         for (PaintballPlayer pbPlayer : arena.getAllPlayers().values()) {
-            // TODO: player
+            if (player.getScoreboard() == null || player.getScoreboard() == null || player.getScoreboard().getTeam(pbPlayer.getTeam().getTitleName()) == null) {
+                continue;
+            }
+
             final org.bukkit.scoreboard.Team playerTeam = player.getScoreboard().getTeam(pbPlayer.getTeam().getTitleName());
             playerTeam.setAllowFriendlyFire(false);
 

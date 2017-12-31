@@ -130,6 +130,15 @@ public class ArenaManager {
                 currentSize = arena.getLobbyPlayers().size();
             }
         }
+
+        if (greatestSizeArena == null) {
+            for (Arena arena : getArenas().values()) {
+                if ((arena.getState() == Arena.ArenaState.IN_PROGRESS || arena.getState() == Arena.ArenaState.STARTING) && arena.getMax() > arena.getAllArenaPlayers().size() && arena.ALLOW_JOIN_IN_PROGRESS) {
+                    return arena;
+                }
+            }
+        }
+
         return greatestSizeArena;
     }
 

@@ -16,7 +16,9 @@ import me.synapz.paintball.locations.SignLocation;
 import me.synapz.paintball.locations.SpectatorLocation;
 import me.synapz.paintball.locations.TeamLocation;
 import me.synapz.paintball.players.*;
+import me.synapz.paintball.storage.PlayerData;
 import me.synapz.paintball.storage.Settings;
+import me.synapz.paintball.storage.files.UUIDPlayerDataFile;
 import me.synapz.paintball.utils.*;
 import me.synapz.paintball.wager.WagerManager;
 import org.bukkit.*;
@@ -67,6 +69,7 @@ public class Arena {
 
     public Sound HIT_SOUND;
 
+    public boolean ALLOW_JOIN_IN_PROGRESS;
     public boolean COINS;
     public boolean FIREWORK_ON_DEATH;
     public boolean STOP_PROT_ON_HIT;
@@ -480,6 +483,33 @@ public class Arena {
 
     public void joinLobby(Player player, Team team) {
         if (Utils.canJoin(player, this)) {
+            if (getState() == ArenaState.IN_PROGRESS || getState() == ArenaState.STARTING) {
+                if (team == null) {
+                    team = getTeamWithLessPlayers();
+                }
+
+                // do everything for joining lobby & arena now to join while live
+                new PlayerData(player);
+                UUIDPlayerDataFile uuidPlayerDataFile = new UUIDPlayerDataFile(player.getUniqueId());
+                uuidPlayerDataFile.savePlayerInformation();
+
+                ArenaPlayer arenaPlayer = makeArenaPlayer(this, team, player);
+
+                team.playerJoinTeam();
+
+                if (ArenaStartCountdown.tasks.get(this) instanceof ArenaStartCountdown) {
+                    ArenaStartCountdown countdown = (ArenaStartCountdown) ArenaStartCountdown.tasks.get(this);
+                    countdown.addPlayerToStartLocations(player, player.getLocation());
+                }
+
+                // must be called after it is created
+                arenaPlayer.giveItems();
+                sendCommands(player, JOIN_COMMANDS);
+                cachedHeads.put(player.getUniqueId(), Utils.getSkull(player, Settings.THEME + BOLD + Messages.CLICK.getString() + Messenger.SUFFIX + RESET + Settings.SECONDARY + Messages.TELEPORT_TO.getString() + ITALIC + team.getChatColor() + player.getPlayer().getName()));
+                remakeSpectatorInventory();
+                return;
+            }
+
             boolean playerFound = false;
             // Inside this block it will only run if the player has the permission to bypass a full queue
 
@@ -517,6 +547,25 @@ public class Arena {
         return wagerManager;
     }
 
+    public ArenaPlayer makeArenaPlayer(Arena arena, Team team, Player player) {
+        if (this instanceof CTFArena)
+            return new CTFArenaPlayer(arena, team, player);
+        else if (this instanceof RTFArena)
+            return new RTFArenaPlayer(arena, team, player);
+        else if (this instanceof FFAArena)
+            return new FFAArenaPlayer(arena, team, player);
+        else if (this instanceof DOMArena)
+            return new DOMArenaPlayer(arena, team, player);
+        else if (this instanceof LTSArena)
+            return new LTSArenaPlayer(arena, team, player);
+        else if (this instanceof DTCArena)
+            return new DTCArenaPlayer(arena, team, player);
+        else if (this instanceof KCArena)
+            return new KCArenaPlayer(arena, team, player);
+        else
+            return new ArenaPlayer(arena, team, player);
+    }
+
     // Starts the game, turns all LobbyPlayers into ArenaPlayers
     public void startGame() {
         ArenaStartEvent event = new ArenaStartEvent(this);
@@ -534,24 +583,7 @@ public class Arena {
 
         for (LobbyPlayer p : lobby) {
             allPlayers.remove(p.getPlayer(), p);
-            ArenaPlayer player;
-
-            if (this instanceof CTFArena)
-                player = new CTFArenaPlayer(p);
-            else if (this instanceof RTFArena)
-                player = new RTFArenaPlayer(p);
-            else if (this instanceof FFAArena)
-                player = new FFAArenaPlayer(p);
-            else if (this instanceof DOMArena)
-                player = new DOMArenaPlayer(p);
-            else if (this instanceof LTSArena)
-                player = new LTSArenaPlayer(p);
-            else if (this instanceof DTCArena)
-                player = new DTCArenaPlayer(p);
-            else if (this instanceof KCArena)
-                player = new KCArenaPlayer(p);
-            else
-                player = new ArenaPlayer(p);
+            ArenaPlayer player = makeArenaPlayer(p.getArena(), p.getTeam(), p.getPlayer());
 
             ArenaJoinEvent event1 = new ArenaJoinEvent(player, this);
             Bukkit.getPluginManager().callEvent(event1);
@@ -1090,6 +1122,7 @@ public class Arena {
         MONEY_PER_WIN               = ARENA.loadInt("Rewards.Money.per-win", this);
         MONEY_PER_DEFEAT            = ARENA.loadInt("Rewards.Money.per-defeat", this);
 
+        ALLOW_JOIN_IN_PROGRESS     = ARENA.loadBoolean("allow-join-in-progress", this);
         COINS                      = ARENA.loadBoolean("coins", this);
         FIREWORK_ON_DEATH          = ARENA.loadBoolean("firework-on-death", this);
         STOP_PROT_ON_HIT           = ARENA.loadBoolean("cancel-prot-on-hit", this);

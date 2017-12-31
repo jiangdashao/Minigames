@@ -3,6 +3,7 @@ package me.synapz.paintball.scoreboards;
 import me.synapz.paintball.arenas.Arena;
 import me.synapz.paintball.enums.Messages;
 import me.synapz.paintball.enums.Tag;
+import me.synapz.paintball.players.PaintballPlayer;
 import me.synapz.paintball.utils.MessageBuilder;
 import me.synapz.paintball.utils.Utils;
 import org.bukkit.Bukkit;
@@ -18,22 +19,15 @@ public class GameScoreboard {
 
     private static HashMap<UUID, GameScoreboard> players = new HashMap<>();
 
-    public static boolean hasScore(Player player) {
-        return players.containsKey(player.getUniqueId());
-    }
-
     public static GameScoreboard getByPlayer(Player player) {
         return players.get(player.getUniqueId());
-    }
-
-    public static GameScoreboard removeScore(Player player) {
-        return players.remove(player.getUniqueId());
     }
 
     private Scoreboard scoreboard;
     private Objective sidebar;
 
-    public GameScoreboard(Player player) {
+    public GameScoreboard(PaintballPlayer pbPlayer) {
+
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         sidebar = scoreboard.registerNewObjective("sidebar", "dummy");
         sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -43,14 +37,22 @@ public class GameScoreboard {
             team.addEntry(genEntry(i));
         }
 
-        player.setScoreboard(scoreboard);
-        players.put(player.getUniqueId(), this);
+        if (scoreboard.getTeam(pbPlayer.getTeam().getTitleName()) == null)
+            scoreboard.registerNewTeam(pbPlayer.getTeam().getTitleName());
+
+        if (scoreboard.getTeam("Spectator") == null) {
+            org.bukkit.scoreboard.Team specTeam = scoreboard.registerNewTeam("Spectator");
+            specTeam.setCanSeeFriendlyInvisibles(true);
+        }
+
+        pbPlayer.getPlayer().setScoreboard(scoreboard);
+        players.put(pbPlayer.getPlayer().getUniqueId(), this);
     }
 
     public void setTitle(me.synapz.paintball.enums.Team team, Arena arena) {
         String title = (team != null ? team.getChatColor() + "█ " : "") + new MessageBuilder(Messages.SCOREBOARD_TITLE).replace(Tag.TIME, convertToNumberFormat(Utils.getCurrentCounter(arena) == -1 ? arena.LOBBY_COUNTDOWN : Utils.getCurrentCounter(arena))).build();
         title = ChatColor.translateAlternateColorCodes('&', title);
-        sidebar.setDisplayName(title.length()>32 ? title.substring(0, 32) : title);
+        sidebar.setDisplayName(title.length() > 32 ? title.substring(0, 32) : title);
     }
 
     public void setSlot(int slot, String text) {

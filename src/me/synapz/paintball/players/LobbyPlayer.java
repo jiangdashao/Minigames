@@ -43,7 +43,7 @@ public class LobbyPlayer extends PaintballPlayer {
      */
     @Override
     protected void initPlayer(boolean storeData) {
-        playerData = new PlayerData(this);
+        playerData = new PlayerData(getPlayer());
         UUIDPlayerDataFile uuidPlayerDataFile = new UUIDPlayerDataFile(player.getUniqueId());
         uuidPlayerDataFile.savePlayerInformation();
 

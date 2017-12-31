@@ -17,5 +17,4 @@ public class LTSArena extends Arena {
         return ArenaType.LTS;
     }
 
-    // TODO: Remove scores
 }

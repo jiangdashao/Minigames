@@ -29,6 +29,10 @@ public class ArenaStartCountdown extends PaintballCountdown {
         sendGameInfo();
     }
 
+    public void addPlayerToStartLocations(Player player, Location location) {
+        startLocations.put(player, location);
+    }
+
     public void onFinish() {
 
         if (arena instanceof FlagArena)

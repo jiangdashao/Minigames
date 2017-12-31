@@ -158,7 +158,7 @@ public enum Messages {
     SCOREBOARD_LIVES("Lives " + Tag.SECONDARY + "» " + Tag.AMOUNT),
     SCOREBOARD_MODE("Mode " + Tag.SECONDARY + "» " + Tag.AMOUNT),
     SCOREBOARD_HEALTH("Health " + Tag.SECONDARY + "» " + Tag.AMOUNT),
-    SCOREBOARD_PLAYERS("Players " + Tag.SECONDARY + "» " + Tag.AMOUNT),
+    SCOREBOARD_PLAYERS("Count " + Tag.SECONDARY + "» " + Tag.AMOUNT),
     SCOREBOARD_TEAM("Team " + Tag.SECONDARY + "» " + Tag.AMOUNT),
     SCOREBOARD_WAGER("Wager " + Tag.SECONDARY + "» " + Tag.AMOUNT),
 

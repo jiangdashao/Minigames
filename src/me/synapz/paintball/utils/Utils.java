@@ -374,17 +374,6 @@ public class Utils {
             }
         }
 
-        // Checks to see if the arena is full
-        if (arena.getLobbyPlayers().size() == arena.getMax() && arena.getMax() > 0) {
-
-            if (player.hasPermission("paintball.join." + arena.getName() + ".bypass") || player.hasPermission("paintball.join.*.bypass")) {
-                return true;
-            } else {
-                Messenger.error(player, new MessageBuilder(Messages.ARENA_IS_FILL).replace(Tag.ARENA, arena.toString(RED)).build());
-                return false;
-            }
-        }
-
         // if safe inventory is true, make sure their inventory is empty before joining
         if (arena.SAFE_INVENTORY) {
 
@@ -413,7 +402,25 @@ public class Utils {
 
         }
 
-        if (state == Arena.ArenaState.WAITING) {
+        // in case join in progress is true, do not allow more players to join even with bypass (bypass can only be used in lobby)
+        if (arena.getAllArenaPlayers().size() >= arena.getMax()) {
+            Messenger.error(player, new MessageBuilder(Messages.ARENA_IS_FILL).replace(Tag.ARENA, arena.toString(RED)).build());
+            return false;
+        }
+
+        // Checks to see if the arena is full
+        if (arena.getLobbyPlayers().size() == arena.getMax() && arena.getMax() > 0) {
+
+            if (player.hasPermission("paintball.join." + arena.getName() + ".bypass") || player.hasPermission("paintball.join.*.bypass")) {
+                return true;
+            } else {
+                Messenger.error(player, new MessageBuilder(Messages.ARENA_IS_FILL).replace(Tag.ARENA, arena.toString(RED)).build());
+                return false;
+            }
+        }
+
+        // allow to join if the arena is waiting OR the arena is in progress/starting and in progress is true in config
+        if (state == Arena.ArenaState.WAITING || ((state == Arena.ArenaState.IN_PROGRESS || state == Arena.ArenaState.STARTING) && arena.ALLOW_JOIN_IN_PROGRESS)) {
             return true;
         } else {
             Messenger.error(player, new MessageBuilder(Messages.ARENA_STATE_CHECK).replace(Tag.ARENA, arena.toString(RED)).replace(Tag.STATE, state.toString().toLowerCase()).build());
@@ -483,6 +490,8 @@ public class Utils {
     // Shoots a Snowball with the correct speed
     public static void shootSnowball(Player player, Arena arena, double accuracy) {
         Projectile pr = player.launchProjectile(Snowball.class);
+
+
 
         Vector v = player.getLocation().getDirection();
         v.add(new Vector(Math.random() * accuracy - accuracy,Math.random() * accuracy - accuracy,Math.random() * accuracy - accuracy));

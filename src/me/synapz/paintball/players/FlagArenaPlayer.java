@@ -10,6 +10,7 @@ import me.synapz.paintball.utils.MessageBuilder;
 import me.synapz.paintball.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class FlagArenaPlayer extends ArenaPlayer {
@@ -17,6 +18,10 @@ public abstract class FlagArenaPlayer extends ArenaPlayer {
     private int captured;
     private int dropped;
     private boolean isFlagHolder;
+
+    public FlagArenaPlayer(Arena arena, Team team, Player player) {
+        super(arena, team, player);
+    }
 
     public FlagArenaPlayer(LobbyPlayer lobbyPlayer) {
         super(lobbyPlayer);

@@ -43,11 +43,6 @@ public class AddCoins extends PaintballCommand {
             return;
         }
 
-        if (coins <= 0) {
-            Messenger.error(player, Messages.AMOUNT_GREATER_THAN_0.getString());
-            return;
-        }
-
         if (targetArena.getState() != Arena.ArenaState.IN_PROGRESS) {
             Messenger.error(player, Messages.ARENA_NOT_IN_PROGRESS.getString().replace(Tag.ARENA + "", targetArena.getName()));
             return;

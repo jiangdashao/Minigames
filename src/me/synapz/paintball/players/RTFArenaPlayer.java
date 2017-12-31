@@ -11,13 +11,14 @@ import me.synapz.paintball.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 public class RTFArenaPlayer extends FlagArenaPlayer {
 
     private RTFArena rtfArena = (RTFArena) arena;
 
-    public RTFArenaPlayer(LobbyPlayer lobbyPlayer) {
-        super(lobbyPlayer);
+    public RTFArenaPlayer(Arena arena, Team team, Player player) {
+        super(arena, team, player);
     }
 
     @Override

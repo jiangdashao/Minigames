@@ -24,6 +24,8 @@ Per-Arena-Settings:
   # The default settings for each arena. Set an arena setting to "default" in order to use this default value ex: kills-to-win: default
   # Arenas will auto-generate with values "default" whenever a new arena is created
   Defaults:
+    # True - a player may join the game while it is in progress. False - player will only be able to join while it is waiting in lobby
+    allow-join-in-progress: false
     # True - Fireworks will launch when a player dies. False - No firework will launch
     firework-on-death: true
     # True - When a protected player attacks another player their protection cencels. False - Protection only ends after timer ends

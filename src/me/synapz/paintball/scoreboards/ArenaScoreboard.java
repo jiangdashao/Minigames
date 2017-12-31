@@ -21,7 +21,7 @@ public class ArenaScoreboard extends GameScoreboard {
     private final Player player;
 
     public ArenaScoreboard(ArenaPlayer arenaPlayer) {
-        super(arenaPlayer.getPlayer());
+        super(arenaPlayer);
 
         this.arenaPlayer = arenaPlayer;
         this.arena = arenaPlayer.getArena();

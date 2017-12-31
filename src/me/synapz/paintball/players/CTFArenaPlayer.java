@@ -5,14 +5,15 @@ import me.synapz.paintball.arenas.CTFArena;
 import me.synapz.paintball.enums.Team;
 import me.synapz.paintball.utils.Utils;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 public class CTFArenaPlayer extends FlagArenaPlayer {
 
     private CTFArena ctfArena = (CTFArena) arena;
     private Team heldFlag;
 
-    public CTFArenaPlayer(LobbyPlayer lobbyPlayer) {
-        super(lobbyPlayer);
+    public CTFArenaPlayer(Arena arena, Team team, Player player) {
+        super(arena, team, player);
     }
 
     @Override

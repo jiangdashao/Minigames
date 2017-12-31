@@ -59,8 +59,6 @@ public class DomGameCountdown extends GameCountdown {
     @Override
     public void cancel() {
         super.cancel();
-
-        // TODO: Remove all claiming
     }
 
     public boolean stop() {

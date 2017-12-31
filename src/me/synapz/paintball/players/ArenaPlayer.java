@@ -11,6 +11,7 @@ import me.synapz.paintball.scoreboards.ArenaScoreboard;
 import me.synapz.paintball.storage.Settings;
 import me.synapz.paintball.storage.files.UUIDStatsFile;
 import me.synapz.paintball.utils.*;
+import org.bukkit.Bukkit;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -56,8 +57,9 @@ public class ArenaPlayer extends PaintballPlayer {
     private boolean isWinner;
     private boolean isTie;
 
-    public ArenaPlayer(LobbyPlayer lobbyPlayer) {
-        super(lobbyPlayer.getArena(), lobbyPlayer.getTeam(), lobbyPlayer.getPlayer(), true);
+    // for when joining without arena
+    public ArenaPlayer(Arena arena, Team team, Player player) {
+        super(arena, team, player, true);
 
         for (Items item : Items.values()) {
             if (item.getUsesPerPlayer() > -1) {
@@ -65,7 +67,12 @@ public class ArenaPlayer extends PaintballPlayer {
             }
         }
 
-        this.uuidStatsFile = Settings.getSettings().getStatsFolder().getPlayerFile(lobbyPlayer.getPlayer().getUniqueId(), true);
+        this.uuidStatsFile = Settings.getSettings().getStatsFolder().getPlayerFile(player.getUniqueId(), true);
+
+    }
+
+    public ArenaPlayer(LobbyPlayer lobbyPlayer) {
+        this(lobbyPlayer.getArena(), lobbyPlayer.getTeam(), lobbyPlayer.getPlayer());
     }
 
     public ArenaPlayer(SpectatorPlayer sp, Team team) {
@@ -79,6 +86,8 @@ public class ArenaPlayer extends PaintballPlayer {
      */
     @Override
     protected void initPlayer(boolean storeData) {
+        giveItems = false;
+
         player.getInventory().clear();
         player.updateInventory();
         player.teleport(arena.getLocation(TeamLocation.TeamLocations.SPAWN, team, Utils.randomNumber(team.getSpawnPointsSize(TeamLocation.TeamLocations.SPAWN))));
@@ -86,8 +95,6 @@ public class ArenaPlayer extends PaintballPlayer {
         if (arena.ARENA_WOOL_HELMET)
             giveWoolHelmet();
 
-        // If it is in progress, it is a spectator player from a death event so give their items, otherwise dont give there items
-        giveItems = arena.getState() == Arena.ArenaState.IN_PROGRESS;
         health = arena.HITS_TO_KILL;
         lives = arena.LIVES;
 
@@ -138,20 +145,23 @@ public class ArenaPlayer extends PaintballPlayer {
         }
 
         PaintballCountdown countdown = GameCountdown.tasks.get(arena);
-        int timePlayed;
 
-        if (countdown instanceof GameFinishCountdown) {
-            timePlayed = arena.TIME;
-        } else if (countdown instanceof ArenaStartCountdown) {
-            timePlayed = 0;
-        } else if (countdown instanceof GameCountdown) {
-            timePlayed = arena.TIME-(int)countdown.getCounter();
-        } else {
-            timePlayed = 0;
-        }
+        if (countdown != null) {
+            int timePlayed;
 
-        if (countdown != null && timePlayed != 0) {
-            uuidStatsFile.addToStat(StatType.TIME_PLAYED, timePlayed);
+            if (countdown instanceof GameFinishCountdown) {
+                timePlayed = arena.TIME;
+            } else if (countdown instanceof ArenaStartCountdown) {
+                timePlayed = 0;
+            } else if (countdown instanceof GameCountdown) {
+                timePlayed = arena.TIME-(int)countdown.getCounter();
+            } else {
+                timePlayed = 0;
+            }
+
+            if (countdown != null && timePlayed != 0) {
+                uuidStatsFile.addToStat(StatType.TIME_PLAYED, timePlayed);
+            }
         }
 
         uuidStatsFile.incrementStat(StatType.GAMES_PLAYED, this);
@@ -548,24 +558,7 @@ public class ArenaPlayer extends PaintballPlayer {
         }
 
         // If there is less than one team with a player, end the game
-        return left <= 1 && arena.getAllPlayers().keySet().size() >= 1 && arena.getState().equals(Arena.ArenaState.IN_PROGRESS);
-    }
-
-    private String shortenMoney(double money) {
-        double calculatedMoney = money;
-        String suffix = "";
-
-        if (money >= 1000) {
-            if (money >= 1000000) {
-                calculatedMoney = money / 1000000;
-                suffix = "M";
-            } else {
-                calculatedMoney = money / 1000;
-                suffix = "K";
-            }
-        }
-
-        return String.format("%s%.2f%s", arena.CURRENCY, calculatedMoney, suffix);
+        return left <= 1 && arena.getAllPlayers().keySet().size() >= 1 && arena.getState() == Arena.ArenaState.IN_PROGRESS;
     }
 
     private boolean reachedGoal() {

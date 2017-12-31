@@ -22,7 +22,7 @@ public class SpectatorScoreboard extends GameScoreboard {
     private final Player player;
 
     public SpectatorScoreboard(SpectatorPlayer spectatorPlayer) {
-        super(spectatorPlayer.getPlayer());
+        super(spectatorPlayer);
 
         this.spectatorPlayer = spectatorPlayer;
         this.arena = spectatorPlayer.getArena();

@@ -39,8 +39,8 @@ public class PlayerData {
      * Safety stores a player's state
      * @param paintballPlayer Player's data to store
      */
-    public PlayerData(PaintballPlayer paintballPlayer) {
-        this.player = paintballPlayer.getPlayer();
+    public PlayerData(Player paintballPlayer) {
+        this.player = paintballPlayer;
         this.experienceManager = new ExperienceManager(player);
         this.location = player.getLocation();
         this.food = player.getFoodLevel();

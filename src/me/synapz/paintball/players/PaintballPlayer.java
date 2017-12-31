@@ -17,7 +17,6 @@ import org.bukkit.scoreboard.Scoreboard;
 public abstract class PaintballPlayer {
 
     private boolean restoreInfo = true;
-    private boolean removeLastPerson = true;
 
     /*
     -----
