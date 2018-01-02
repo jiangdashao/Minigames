@@ -1,5 +1,7 @@
 package me.synapz.paintball.utils;
 
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -15,15 +17,18 @@ public class ActionBar {
 
     public static void sendActionBar(Player player, String message) {
         try {
-            loadNmsClasses();
-            Object connection = ReflectionUtil.getConnection(player);
-            Method sendPacket = ReflectionUtil.getMethod(connection.getClass(), "sendPacket", packet);
-            Object serialized = chatSerializerPacket.getConstructor(String.class).newInstance(ChatColor.translateAlternateColorCodes('&', message));
-            Object packet = chatPacket.getConstructor(chatBasePacket, byte.class).newInstance(serialized, (byte) 2);
-            sendPacket.invoke(connection, packet);
-        } catch (NoSuchFieldException | IllegalAccessException | InvocationTargetException | NoSuchMethodException  | InstantiationException e) {
-            // Messenger.error(Bukkit.getConsoleSender(), "Error sending action bar to player: " + player.getName());
-            // e.printStackTrace();
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
+        } catch (NoSuchMethodError error) {
+            try {
+                loadNmsClasses();
+                Object connection = ReflectionUtil.getConnection(player);
+                Method sendPacket = ReflectionUtil.getMethod(connection.getClass(), "sendPacket", packet);
+                Object serialized = chatSerializerPacket.getConstructor(String.class).newInstance(ChatColor.translateAlternateColorCodes('&', message));
+                Object packet = chatPacket.getConstructor(chatBasePacket, byte.class).newInstance(serialized, (byte) 2);
+                sendPacket.invoke(connection, packet);
+            } catch (NoSuchFieldException | IllegalAccessException | InvocationTargetException | NoSuchMethodException  | InstantiationException e) {
+
+            }
         }
     }
 
@@ -34,7 +39,7 @@ public class ActionBar {
             if (chatSerializerPacket == null) chatSerializerPacket = ReflectionUtil.getNMSClass("ChatComponentText");
             if (packet == null) packet = ReflectionUtil.getNMSClass("Packet");
         } catch (ClassNotFoundException e) {
-            // Messenger.error(Bukkit.getConsoleSender(), "Error loading nms classes for action bar util.");
+
         }
     }
 }

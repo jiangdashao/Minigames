@@ -2,7 +2,6 @@ package me.synapz.paintball.arenas;
 
 
 import com.google.common.base.Joiner;
-import me.synapz.paintball.Paintball;
 import me.synapz.paintball.coin.CoinItem;
 import me.synapz.paintball.countdowns.ArenaStartCountdown;
 import me.synapz.paintball.countdowns.GameFinishCountdown;
@@ -115,7 +114,7 @@ public class Arena {
     private Map<Location, SignLocation> signLocations = new HashMap<>();
     private Map<Items, Integer> coinUsesPerGame = new HashMap<>();
 
-    private Map<UUID, ItemStack> cachedHeads = new HashMap<>();
+    public Map<UUID, ItemStack> cachedHeads = new HashMap<>();
 
     private ArenaState state;
     private boolean toReload;
@@ -628,6 +627,16 @@ public class Arena {
     }
 
     public void forceLeaveArena() {
+        ArenaManager.getArenaManager().clearNextArena();
+
+        if (Settings.SERVER_TYPE == ServerType.ROTATION) {
+            for (ArenaPlayer arenaPlayer : getAllArenaPlayers()) {
+                new RotationPlayer(arenaPlayer.getPlayer());
+            }
+        } else if (Settings.SERVER_TYPE == ServerType.VOTE) {
+            // TODO: convert to VoteRotationPlayer
+        }
+
         setRemoveLastPlayer(false);
         wagerManager = new WagerManager();
         List<PaintballPlayer> copiedList = new ArrayList<>(allPlayers.values());
@@ -725,7 +734,7 @@ public class Arena {
         }
 
         for (PaintballPlayer player : getAllPlayers().values()) {
-            TitleUtil.sendTitle(player.getPlayer(), THEME + (teams.size() == 1 ? new MessageBuilder(Messages.TEAM_WON).replace(Tag.TEAM, list).build() : new MessageBuilder(Messages.TEAM_WON).replace(Tag.TEAM, list).build()), SECONDARY + (teams.size() == 1 ? Messages.YOU.getString() + " " + (teams.contains(player.getTeam()) ? Messages.WON.getString() : Messages.LOST.getString()) : list));
+            MessageUtil.sendTitle(player.getPlayer(), THEME + (teams.size() == 1 ? new MessageBuilder(Messages.TEAM_WON).replace(Tag.TEAM, list).build() : new MessageBuilder(Messages.TEAM_WON).replace(Tag.TEAM, list).build()), SECONDARY + (teams.size() == 1 ? Messages.YOU.getString() + " " + (teams.contains(player.getTeam()) ? Messages.WON.getString() : Messages.LOST.getString()) : list), 20, 20, 20);
         }
 
         if (wagerManager.hasWager()) {
@@ -749,18 +758,18 @@ public class Arena {
 
     public void broadcastTitle(String header, String footer, int fadeIn, int stay, int fadeOut) {
         for (Player player : allPlayers.keySet()) {
-            TitleUtil.sendTitle(player, header.toString(), footer.toString());
+            MessageUtil.sendTitle(player, header.toString(), footer.toString(), fadeIn, stay, fadeOut);
         }
     }
 
     public void broadcastTitle(Messages header, Messages footer, int fadeIn, int stay, int fadeOut) {
         for (Player player : allPlayers.keySet()) {
-            TitleUtil.sendTitle(player, header.getString(), footer.getString());
+            MessageUtil.sendTitle(player, header.getString(), footer.getString(), fadeIn, stay, fadeOut);
         }
     }
 
     // Returns the team with less players for when someone joins
-    protected Team getTeamWithLessPlayers() {
+    public Team getTeamWithLessPlayers() {
         return Utils.max(this);
     }
 

@@ -34,7 +34,8 @@ public enum Tag {
     DIED,
     ITEM,
     STATE,
-    ACTION;
+    ACTION,
+    SERVER_TYPE;
 
     @Override
     public String toString() {

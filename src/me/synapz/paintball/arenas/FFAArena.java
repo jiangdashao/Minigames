@@ -21,7 +21,7 @@ public class FFAArena extends Arena {
     Since it is FFA, just put them into the arena with less players
      */
     @Override
-    protected Team getTeamWithLessPlayers() {
+    public Team getTeamWithLessPlayers() {
         for (Team t : getActiveArenaTeamList()) {
             if (t.getSize() <= 0) // for some reason these numbers are negative, so it checks for under 0
                 return t;

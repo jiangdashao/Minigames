@@ -72,6 +72,10 @@ public class ItemFile extends PaintballFile {
         return Utils.strToSound(loadString(item, "sound", item.getDefaultSound().toString()));
     }
 
+    public boolean isDefaultItem(Items item) {
+        return loadBoolean(item, "is-default", item.getDefaultName().equals("Gun"));
+    }
+
     public String getCustomSound(Items item) {
         return loadString(item, "custom-sound", "");
     }

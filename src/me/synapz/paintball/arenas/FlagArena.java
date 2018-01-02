@@ -11,7 +11,7 @@ import static org.bukkit.ChatColor.*;
 
 public abstract class FlagArena extends Arena {
 
-    private final BlockManager blockManager;
+    protected final BlockManager blockManager;
 
     public FlagArena(String name, String currentName, boolean addToConfig) {
         super(name, currentName, addToConfig);

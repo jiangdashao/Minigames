@@ -4,11 +4,10 @@ import me.synapz.paintball.enums.ArenaType;
 import me.synapz.paintball.enums.Team;
 import me.synapz.paintball.storage.Settings;
 import me.synapz.paintball.utils.Utils;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.Wool;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,15 +63,15 @@ public class DOMArena extends FlagArena {
         for (Team team : getActiveArenaTeamList()) {
             Location center = getFlagLocation(team).subtract(0, 1, 0);
 
-            List<Location> secLoc = makePlatform(center.clone(), Material.STAINED_GLASS, team.getDyeColor().getDyeData(), GENERATE_SIZE, Material.STAINED_CLAY);
-            makePlatform(center.clone().subtract(0, 1, 0), Material.STAINED_CLAY, team.getDyeColor().getDyeData(), GENERATE_SIZE, null);
+            List<Location> secLoc = makePlatform(center.clone(), Material.STAINED_GLASS, team.getDyeColor(), GENERATE_SIZE, Material.STAINED_CLAY);
+            makePlatform(center.clone().subtract(0, 1, 0), Material.STAINED_CLAY, team.getDyeColor(), GENERATE_SIZE, null);
             removeAbove(center.clone());
 
             // Makes iron under beacon to turn it on
-            makePlatform(center.clone().subtract(0, 2, 0), Material.IRON_BLOCK, (byte) 0, 1, null);
+            makePlatform(center.clone().subtract(0, 2, 0), Material.IRON_BLOCK,  null, 1, null);
 
             // Turns the lower block to a beacon
-            setBlock(center.clone().subtract(0, 1, 0), Material.BEACON, (byte) 0);
+            setBlock(center.clone().subtract(0, 1, 0), Material.BEACON, null);
 
             for (Location loc : secLoc) {
                 secureLocations.put(Utils.simplifyLocation(loc), team);
@@ -99,15 +98,15 @@ public class DOMArena extends FlagArena {
         Location center = centerLoc.get(loc);
         Team pastTeam = secureLocations.get(loc);
 
-        List<Location> secLoc = makePlatform(center.clone(), Material.STAINED_GLASS, team.getDyeColor().getDyeData(), GENERATE_SIZE, Material.STAINED_CLAY);
-        makePlatform(center.clone().subtract(0, 1, 0), Material.STAINED_CLAY, team.getDyeColor().getDyeData(), GENERATE_SIZE, null);
+        List<Location> secLoc = makePlatform(center.clone(), Material.STAINED_GLASS, team.getDyeColor(), GENERATE_SIZE, Material.STAINED_CLAY);
+        makePlatform(center.clone().subtract(0, 1, 0), Material.STAINED_CLAY, team.getDyeColor(), GENERATE_SIZE, null);
         removeAbove(center.clone());
 
         // Makes iron under beacon to turn it on
-        makePlatform(center.clone().subtract(0, 2, 0), Material.IRON_BLOCK, (byte) 0, 1, null);
+        makePlatform(center.clone().subtract(0, 2, 0), Material.IRON_BLOCK, null, 1, null);
 
         // Turns the lower block to a beacon
-        setBlock(center.clone().subtract(0, 1, 0), Material.BEACON, (byte) 0);
+        setBlock(center.clone().subtract(0, 1, 0), Material.BEACON, null);
 
         for (Location locIt : secLoc) {
             secureLocations.replace(Utils.simplifyLocation(locIt), pastTeam, team);
@@ -133,7 +132,7 @@ public class DOMArena extends FlagArena {
         return runningScore;
     }
 
-    private void setBlock(Location loc, Material material, byte data) {
+    private void setBlock(Location loc, Material material, DyeColor dyeColor) {
         loc = Utils.simplifyLocation(loc);
 
         if (!oldBlocks.containsKey(loc))
@@ -144,11 +143,33 @@ public class DOMArena extends FlagArena {
 
         loc.getBlock().setType(material);
 
-        if (data != 0)
-            loc.getBlock().setData(data);
+        if (dyeColor != null) {
+            /*
+            maybe when the material api is finally done I can use this >.>
+
+            MaterialData data;
+
+            switch (material) {
+                case WOOL:
+                    data = new Wool(dyeColor);
+                    break;
+                case STAINED_CLAY:
+                    break;
+                case STAINED_GLASS:
+                    break;
+                case STAINED_GLASS_PANE:
+                    break;
+                default:
+                    return;
+            }*/
+
+            // loc.getBlock().getState().setData(data);
+
+            loc.getBlock().setData(dyeColor.getWoolData());
+        }
     }
 
-    private List<Location> makePlatform(Location center, Material material, byte data, int radius, Material border) {
+    private List<Location> makePlatform(Location center, Material material, DyeColor dyeColor, int radius, Material border) {
         List<Location> secLoc = new ArrayList<>();
 
         if (border != null)
@@ -160,9 +181,9 @@ public class DOMArena extends FlagArena {
                 Location point = center.clone().add(x, 0, z);
 
                 if (border != null && (Math.abs(x) == radius || Math.abs(z) == radius)) {
-                    setBlock(point, border, data);
+                    setBlock(point, border, dyeColor);
                 } else {
-                    setBlock(point, material, data);
+                    setBlock(point, material, dyeColor);
                     secLoc.add(point);
                     secLoc.add(point.add(0, 1, 0));
                 }
@@ -177,7 +198,7 @@ public class DOMArena extends FlagArena {
         for (int y = 1; y <= 240; ++y) {
             Block toChange = center.clone().add(0, y, 0).getBlock();
             if (toChange != null && toChange.getType() != Material.AIR)
-                setBlock(toChange.getLocation(), Material.AIR, (byte) 0);
+                setBlock(toChange.getLocation(), Material.AIR, null);
         }
     }
 }

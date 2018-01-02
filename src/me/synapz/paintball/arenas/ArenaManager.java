@@ -12,6 +12,7 @@ import me.synapz.paintball.locations.SkullLocation;
 import me.synapz.paintball.storage.Settings;
 import me.synapz.paintball.utils.MessageBuilder;
 import me.synapz.paintball.utils.Messenger;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
@@ -28,7 +29,10 @@ public class ArenaManager {
     // HashMap with arena's name to arena, makes it way more efficient to get an arena from a string
     private Map<String, Arena> arenas = new HashMap<>();
 
+    private Arena nextArena;
+
     private ArenaManager() {
+
     }
 
     public static ArenaManager getArenaManager() {
@@ -142,12 +146,26 @@ public class ArenaManager {
         return greatestSizeArena;
     }
 
+    public void clearNextArena() {
+        nextArena = null;
+    }
+
+    public Arena getNextArena() {
+        if (nextArena == null) {
+            Collections.shuffle(new ArrayList<>(arenas.values()));
+            for (Arena arena : getArenas().values()) {
+                if (arena.getState() == Arena.ArenaState.WAITING) {
+                    nextArena = arena;
+                }
+            }
+        }
+
+        return nextArena;
+    }
+
     // Updates every type of sign (Leaderboard, Join, Autojoin)
     public void updateAllSignsOnServer() {
         String prefix = Messages.SIGN_TITLE.getString();
-
-        // TODO: idk what is going on with bungee if dart even has it even working but this is throwing a NPE
-        // Paintball.getInstance().getBungeeManager().updateBungeeSigns();
 
         for (SignLocation signLoc : Settings.ARENA.getSigns().values()) {
             if (!(signLoc instanceof SkullLocation) && !(signLoc.getLocation().getBlock().getState() instanceof Sign)) {

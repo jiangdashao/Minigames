@@ -106,10 +106,6 @@ public class RTFArena extends FlagArena {
         neutralFlagLocation = loc;
     }
 
-    public BlockManager getBlockManager() {
-        return getBlockManager();
-    }
-
     public Location getNuetralFlagLocation() {
         return new FlagLocation(this, null).getLocation();
     }

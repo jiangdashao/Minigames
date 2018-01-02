@@ -177,6 +177,8 @@ public enum Messages {
     SIGN_LEAVE("&cLeave"),
     SIGN_SPECTATE("&aSpectate"),
 
+    CANNOT_JOIN_SERVER_TYPE("Joining is disabled for " + Tag.SERVER_TYPE + " Paintball server."),
+
     ARENA_START_MESSAGE("Game started"),
     ARENA_TEAMS_NOT_BALANCED("You cannot change to this team until the teams are balanced."),
 

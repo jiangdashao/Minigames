@@ -2,6 +2,11 @@
 theme-color: '&3'
 # Secondary color of messages. Used as a secondary color in with theme-color
 secondary-color: '&7'
+# Options: normal, rotation, vote
+# normal - multiarenas join through command/sign
+# rotation - one arena at a time which rotates automatically to a random arena
+# vote - rotation, but instead of arenas being rotated randomly they are chosen by most votes
+server-type: normal
 
 Commands:
   # If true, disables all commands in arena except for: Allowed commands and (if all-paintball-commands is true) Paintball commands.

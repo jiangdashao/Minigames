@@ -66,7 +66,7 @@ public enum Items {
         this.usesPerPlayer = usesPerPlayer;
         this.delay = delay;
         this.speed = speed;
-        customSound = "";
+        this.customSound = "";
     }
 
     public String getName() {
@@ -137,6 +137,10 @@ public enum Items {
         return Settings.ITEMS.getSpeed(this);
     }
 
+    public boolean isDefaultItem() {
+        return Settings.ITEMS.isDefaultItem(this);
+    }
+
     public String getDefaultName() {
         return name;
     }
@@ -200,4 +204,5 @@ public enum Items {
     public float getDefaultSpeed() {
         return speed;
     }
+
 }

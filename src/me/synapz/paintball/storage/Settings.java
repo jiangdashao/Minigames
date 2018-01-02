@@ -6,6 +6,7 @@ import me.synapz.paintball.arenas.ArenaManager;
 import me.synapz.paintball.coin.CoinItems;
 import me.synapz.paintball.enums.Databases;
 import me.synapz.paintball.enums.ScoreboardLine;
+import me.synapz.paintball.enums.ServerType;
 import me.synapz.paintball.enums.StatType;
 import me.synapz.paintball.storage.database.ConnectionPool;
 import me.synapz.paintball.storage.database.DatabaseManager;
@@ -37,6 +38,7 @@ public class Settings {
     public static boolean USE_CHAT;
     public static boolean USE_ECONOMY;
     public static boolean HOLOGRAPHIC_DISPLAYS;
+    public static ServerType SERVER_TYPE;
 
     public static Economy ECONOMY = null;
     public static Chat CHAT = null;
@@ -137,6 +139,18 @@ public class Settings {
         AUTHOR = pluginYML.getAuthors().toString();
         THEME = ChatColor.translateAlternateColorCodes('&', loadString("theme-color"));
         SECONDARY = ChatColor.translateAlternateColorCodes('&', loadString("secondary-color"));
+
+        try {
+            String type = loadString("server-type");
+            if (type == null) {
+                SERVER_TYPE = ServerType.NORMAL;
+            } else {
+                SERVER_TYPE = ServerType.valueOf(type.toUpperCase());
+            }
+        } catch (IllegalArgumentException exc) {
+            SERVER_TYPE = ServerType.NORMAL;
+        }
+
         HOLOGRAPHIC_DISPLAYS = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
     }
 

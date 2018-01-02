@@ -34,24 +34,6 @@ public class ExperienceManager {
     }
 
     /**
-     * Get the current hard max level for which calculations will be done.
-     *
-     * @return the current hard max level
-     */
-    public static int getHardMaxLevel() {
-        return hardMaxLevel;
-    }
-
-    /**
-     * Set the current hard max level for which calculations will be done.
-     *
-     * @param hardMaxLevel the new hard max level
-     */
-    public static void setHardMaxLevel(int hardMaxLevel) {
-        ExperienceManager.hardMaxLevel = hardMaxLevel;
-    }
-
-    /**
      * Initialize the XP lookup table. See http://minecraft.gamepedia.com/Experience
      *
      * @param maxLevel The highest level handled by the lookup tables
@@ -103,42 +85,11 @@ public class ExperienceManager {
     }
 
     /**
-     * Adjust the player's XP by the given amount in an intelligent fashion.
-     * Works around some of the non-intuitive behaviour of the basic Bukkit
-     * player.giveExp() method.
-     *
-     * @param amt Amount of XP, may be negative
-     */
-    public void changeExp(int amt) {
-        changeExp((double) amt);
-    }
-
-    /**
-     * Adjust the player's XP by the given amount in an intelligent fashion.
-     * Works around some of the non-intuitive behaviour of the basic Bukkit
-     * player.giveExp() method.
-     *
-     * @param amt Amount of XP, may be negative
-     */
-    public void changeExp(double amt) {
-        setExp(getCurrentFractionalXP(), amt);
-    }
-
-    /**
      * Set the player's experience
      *
      * @param amt Amount of XP, should not be negative
      */
     public void setExp(int amt) {
-        setExp(0, amt);
-    }
-
-    /**
-     * Set the player's fractional experience.
-     *
-     * @param amt Amount of XP, should not be negative
-     */
-    public void setExp(double amt) {
         setExp(0, amt);
     }
 
@@ -172,33 +123,6 @@ public class ExperienceManager {
 
         int lvl = player.getLevel();
         return getXpForLevel(lvl) + Math.round(getXpNeededToLevelUp(lvl) * player.getExp());
-    }
-
-    private double getCurrentFractionalXP() {
-        Player player = getPlayer();
-
-        int lvl = player.getLevel();
-        return getXpForLevel(lvl) + (double) (getXpNeededToLevelUp(lvl) * player.getExp());
-    }
-
-    /**
-     * Checks if the player has the given amount of XP.
-     *
-     * @param amt The amount to check for.
-     * @return true if the player has enough XP, false otherwise
-     */
-    public boolean hasExp(int amt) {
-        return getCurrentExp() >= amt;
-    }
-
-    /**
-     * Checks if the player has the given amount of fractional XP.
-     *
-     * @param amt The amount to check for.
-     * @return true if the player has enough XP, false otherwise
-     */
-    public boolean hasExp(double amt) {
-        return getCurrentFractionalXP() >= amt;
     }
 
     /**

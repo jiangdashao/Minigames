@@ -4,8 +4,8 @@ import me.synapz.paintball.arenas.Arena;
 import me.synapz.paintball.arenas.DOMArena;
 import me.synapz.paintball.enums.Team;
 import me.synapz.paintball.storage.Settings;
-import me.synapz.paintball.utils.Title;
-import me.synapz.paintball.utils.TitleUtil;
+import me.synapz.paintball.utils.MessageBuilder;
+import me.synapz.paintball.utils.MessageUtil;
 import me.synapz.paintball.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -36,20 +36,24 @@ public class DOMArenaPlayer extends ArenaPlayer {
 
     public void setSecuring(boolean securing, Team beingSecured) {
         if (!securing) {
-            TitleUtil.resetTitle(player);
             timeSecuring = 0;
             messageSent = false;
             this.beingSecured = null;
+
+            if (isSecuring == true) {
+                MessageUtil.resetTitle(player);
+            }
+
             this.isSecuring = false;
             updateScoreboard();
         } else {
-            if (timeSecuring >= domArena.SECURE_TIME+1) {
-                TitleUtil.sendTitle(player, "", Settings.THEME + ChatColor.BOLD + "Position Secured!");
+            if (timeSecuring > domArena.SECURE_TIME) {
+                MessageUtil.sendTitle(player, "", Settings.THEME + ChatColor.BOLD + "Position Secured!", 0, 20, 10);
                 player.getWorld().playSound(player.getLocation(), domArena.SECURE, 5, 5);
             } else {
-                TitleUtil.resetTitle(player);
                 this.beingSecured = beingSecured;
             }
+
             this.isSecuring = true;
         }
 
@@ -67,7 +71,7 @@ public class DOMArenaPlayer extends ArenaPlayer {
         if (timeSecuring >= domArena.SECURE_TIME) {
             if (timeSecuring == domArena.SECURE_TIME) {
                 domArena.teamSecured(Utils.simplifyLocation(player.getLocation()), team);
-                TitleUtil.sendTitle(player, "", Settings.THEME + ChatColor.BOLD + "Position Secured!");
+                MessageUtil.sendTitle(player, "", Settings.THEME + ChatColor.BOLD + "Position Secured!", 0, 20, 10);
                 player.getWorld().playSound(player.getLocation(), domArena.SECURE, 5, 5);
             }
         } else {
@@ -76,7 +80,7 @@ public class DOMArenaPlayer extends ArenaPlayer {
                 messageSent = true;
             }
 
-            TitleUtil.resetTitle(player);
+            MessageUtil.sendTitle(player, "", makeBar(), 0, 25, 0);
         }
     }
 

@@ -65,10 +65,8 @@ public class CommandManager implements CommandExecutor{
                         if (nullCheck(command1, player)) {
                             return true;
                         }
-                        if (command1.getCommandType() == command.getCommandType())
-                            dispatchCommand(command1, player, args);
-                        else
-                            Messenger.error(sender, "Wrong command type.", "Did you mean " + command1.getCorrectUsage().replace("Usage: ", ""));
+
+                        dispatchCommand(command1, player, args);
                     }
                     return true;
                 }

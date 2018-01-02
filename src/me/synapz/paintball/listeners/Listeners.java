@@ -5,10 +5,7 @@ import me.synapz.paintball.arenas.*;
 import me.synapz.paintball.coin.CoinItem;
 import me.synapz.paintball.coin.CoinItemListener;
 import me.synapz.paintball.countdowns.ProtectionCountdown;
-import me.synapz.paintball.enums.Items;
-import me.synapz.paintball.enums.Messages;
-import me.synapz.paintball.enums.Tag;
-import me.synapz.paintball.enums.Team;
+import me.synapz.paintball.enums.*;
 import me.synapz.paintball.events.ArenaPlayerDeathEvent;
 import me.synapz.paintball.events.ArenaPlayerShootEvent;
 import me.synapz.paintball.locations.FlagLocation;
@@ -77,6 +74,10 @@ public class Listeners extends BaseListener implements Listener {
                     }
 
                     joinArena.joinLobby(player, null);
+                } else if (Settings.SERVER_TYPE == ServerType.ROTATION) {
+                    new RotationPlayer(player);
+                } else if (Settings.SERVER_TYPE == ServerType.VOTE) {
+                    // TODO: create VoteRotationPlayer
                 }
             }
         }.runTaskLater(paintball, 20 * 3); // wait 3 seconds for latency
@@ -126,6 +127,8 @@ public class Listeners extends BaseListener implements Listener {
         if (isInArena(player)) {
             a.getAllPlayers().get(player).leaveDontSave();
         }
+
+        RotationPlayer.removePlayer(e.getPlayer().getName());
     }
 
     // Don't let players break blocks in arena

@@ -37,10 +37,11 @@ public class CoinItem extends ItemStack {
     private final long delay;
     private final float speed;
     private final String customSound;
+    private final boolean isDefaultItem;
 
     private Items coinEnumItem;
 
-    public CoinItem(Material material, String name, int amount, boolean showItem, String description, double money, int coins, int expirationTime, String permission, String action, Sound sound, int usesPerPlayer, int usesPerGame, int damage, long delay, float speed, String customSound) {
+    public CoinItem(Material material, String name, int amount, boolean showItem, String description, double money, int coins, int expirationTime, String permission, String action, Sound sound, int usesPerPlayer, int usesPerGame, int damage, long delay, float speed, String customSound, boolean isDefaultItem) {
         super(material, amount);
         this.name = name;
         this.nameWithSpaces = name;
@@ -59,6 +60,7 @@ public class CoinItem extends ItemStack {
         this.delay = delay;
         this.speed = speed;
         this.customSound = customSound;
+        this.isDefaultItem = isDefaultItem;
 
         CoinItemHandler.getHandler().addItem(this);
     }
@@ -81,7 +83,8 @@ public class CoinItem extends ItemStack {
                 item.getDamage(),
                 item.getDelay(),
                 item.getSpeed(),
-                item.getCustomSound());
+                item.getCustomSound(),
+                item.isDefaultItem());
 
         this.coinEnumItem = item;
     }
@@ -105,6 +108,7 @@ public class CoinItem extends ItemStack {
         this.speed = item.getSpeed();
         this.coinEnumItem = item.getCoinEnumItem();
         this.customSound = item.getCustomSound();
+        this.isDefaultItem = item.isDefaultItem();
     }
 
     // Gets the item name
@@ -169,6 +173,10 @@ public class CoinItem extends ItemStack {
 
     public float getSpeed() {
         return speed;
+    }
+
+    public boolean isDefaultItem() {
+        return isDefaultItem;
     }
 
     // Sets the values specific to the arena player, then returns the item to be placed in coinshop

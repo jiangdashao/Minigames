@@ -6,7 +6,9 @@ import me.synapz.paintball.coin.CoinItemListener;
 import me.synapz.paintball.commands.CommandManager;
 import me.synapz.paintball.compat.NoCheatPlusCompat;
 import me.synapz.paintball.enums.Databases;
+import me.synapz.paintball.enums.ServerType;
 import me.synapz.paintball.listeners.*;
+import me.synapz.paintball.players.RotationPlayer;
 import me.synapz.paintball.storage.Settings;
 import me.synapz.paintball.storage.database.ConnectionPool;
 import net.milkbowl.vault.chat.Chat;
@@ -69,6 +71,7 @@ public class Paintball extends JavaPlugin implements Listener {
 
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null)
             new PlaceholderRequest(this).hook();
+
     }
 
     @Override

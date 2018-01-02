@@ -67,9 +67,7 @@ public class ArenaStartCountdown extends PaintballCountdown {
     public boolean intervalCheck() {
         arena.updateAllScoreboardTimes();
         sendGameInfo();
-        arena.updateSigns();
-        tpAllPlayersBack();
-        return counter <= arena.ARENA_NO_INTERVAL || counter % arena.ARENA_INTERVAL == 0;
+        arena.updateSigns();return counter <= arena.ARENA_NO_INTERVAL || counter % arena.ARENA_INTERVAL == 0;
     }
 
     @Override

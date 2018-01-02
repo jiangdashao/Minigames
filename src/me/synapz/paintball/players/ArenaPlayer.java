@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ public class ArenaPlayer extends PaintballPlayer {
     protected int hits;
     protected int shots;
     protected int lives;
+    protected double accuracy;
     private int multiplier = 1;
 
     private Location lastLocation;
@@ -86,6 +88,22 @@ public class ArenaPlayer extends PaintballPlayer {
      */
     @Override
     protected void initPlayer(boolean storeData) {
+        for (PermissionAttachmentInfo permission : player.getEffectivePermissions()) {
+            if (permission.getPermission() != null && !permission.getPermission().isEmpty() && permission.getPermission().startsWith("paintball.accuracy.")) {
+                String[] split = permission.getPermission().split("\\.");
+
+                if (split.length > 2) {
+                    String percent = split[2];
+
+                    try {
+                        accuracy = ((double) (100 - Integer.parseInt(percent))) / 1000;
+                    } catch (NumberFormatException exc) {
+                        continue;
+                    }
+                }
+            }
+        }
+
         giveItems = false;
 
         player.getInventory().clear();
@@ -238,7 +256,16 @@ public class ArenaPlayer extends PaintballPlayer {
         PlayerInventory inv = player.getInventory();
 
         inv.setArmorContents(Utils.colorLeatherItems(team, new ItemStack(Material.LEATHER_BOOTS), new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_CHESTPLATE), new ItemStack(Material.LEATHER_HELMET)));
-        CoinItems.getCoinItems().getDefaultItem().giveItemToPlayer(0, this);
+
+        for (int i = 0; i < CoinItemHandler.getHandler().getDefaultItems().size(); i++) {
+            // prevent from taking over coin shop or from going out of hot bar locations
+            if (i > 8) {
+                break;
+            }
+
+            CoinItemHandler.getHandler().getDefaultItems().get(i).giveItemToPlayer(i, this);
+        }
+
 
         if (arena.COIN_SHOP)
             inv.setItem(8, Utils.makeItem(arena.COIN_SHOP_TYPE, Messages.ARENA_SHOP_NAME.getString(), 1));
@@ -401,7 +428,7 @@ public class ArenaPlayer extends PaintballPlayer {
 
                 player.teleport(arena.getLocation(TeamLocation.TeamLocations.SPAWN, team, Utils.randomNumber(team.getSpawnPointsSize(TeamLocation.TeamLocations.SPAWN))));
 
-                TitleUtil.sendTitle(player, Messages.ARENA_DIE_HEADER.getString(), Messages.ARENA_DIE_FOOTER.getString());
+                MessageUtil.sendTitle(player, Messages.ARENA_DIE_HEADER.getString(), Messages.ARENA_DIE_FOOTER.getString(), 20, 20, 10);
 
                 new ProtectionCountdown(arena.SAFE_TIME, this);
 
@@ -539,6 +566,10 @@ public class ArenaPlayer extends PaintballPlayer {
 
     public boolean isTie() {
         return isTie;
+    }
+
+    public double getAccuracy() {
+        return accuracy;
     }
 
     public Location getLastLocation() {

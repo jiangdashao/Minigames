@@ -20,11 +20,12 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CoinItems implements Listener {
 
     private static CoinItems instance = null;
-
-    private CoinItem defaultItem;
 
     public static CoinItems getCoinItems() {
         if (instance == null) {
@@ -33,12 +34,19 @@ public class CoinItems implements Listener {
         return instance;
     }
 
-    public CoinItems() {
-        makeItem();
-    }
-
     public void loadItems() {
         instance = new CoinItems();
+
+        new CoinItem(Items.DEFAULT) {
+            @Override
+            public void onClickItem(ArenaClickItemEvent event) {
+                Player player = event.getArenaPlayer().getPlayer();
+                Arena arena = event.getArena();
+
+                if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)
+                    Utils.shootSnowball(event.getArenaPlayer(), event.getArena(), arena.ACCURACY, true);
+            }
+        };
 
         new CoinItem(Items.AK_47) {
             public void onClickItem(ArenaClickItemEvent event) {
@@ -82,7 +90,7 @@ public class CoinItems implements Listener {
 
                 if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                     for (int i = 0; i < 20; i++)
-                    Utils.shootSnowball(player, event.getArena(), 0.2);
+                    Utils.shootSnowball(event.getArenaPlayer(), event.getArena(), 0.2, false);
                 }
             }
         };
@@ -173,7 +181,7 @@ public class CoinItems implements Listener {
 
                 if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                     for (int i = 0; i < 50; i++) {
-                        Utils.shootSnowball(player, event.getArena(), 0.3);
+                        Utils.shootSnowball(event.getArenaPlayer(), event.getArena(), 0.3, false);
                     }
 
                     player.getInventory().remove(player.getItemInHand());
@@ -209,7 +217,7 @@ public class CoinItems implements Listener {
                         inv.setItemInOffHand(player.getItemInHand());
                         inv.setItemInMainHand(new ItemStack(Material.AIR));
                     } else {
-                        Utils.shootSnowball(player, event.getArena(), 0.1);
+                        Utils.shootSnowball(event.getArenaPlayer(), event.getArena(), 0.1, false);
                     }
                 }
             };
@@ -244,7 +252,7 @@ public class CoinItems implements Listener {
                     Location loc = player.getLocation();
                     loc.setPitch(-90);
                     player.teleport(loc);
-                    Utils.shootSnowball(player, event.getArena(), 0.2);
+                    Utils.shootSnowball(event.getArenaPlayer(), event.getArena(), 0.2, false);
                 }
                 player.getInventory().remove(player.getItemInHand());
             }
@@ -270,33 +278,9 @@ public class CoinItems implements Listener {
         new CoinItem(Items.RAPID_FIRE) {
             @Override
             public void onClickItem(ArenaClickItemEvent event) {
-                Player player = event.getArenaPlayer().getPlayer();
-
-                Utils.shootSnowball(player, event.getArena(), 0.1);
+                Utils.shootSnowball(event.getArenaPlayer(), event.getArena(), 0.1, false);
             }
         };
-
-        makeItem();
     }
 
-    public CoinItem getDefaultItem() {
-        return defaultItem;
-    }
-
-    public void setDefaultItem(CoinItem coinItem) {
-        this.defaultItem = coinItem;
-    }
-
-    private void makeItem() {
-        setDefaultItem(new CoinItem(Items.DEFAULT) {
-            @Override
-            public void onClickItem(ArenaClickItemEvent event) {
-                Player player = event.getArenaPlayer().getPlayer();
-                Arena arena = event.getArena();
-
-                if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)
-                    Utils.shootSnowball(player, event.getArena(), arena.ACCURACY);
-            }
-        });
-    }
 }

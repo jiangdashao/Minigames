@@ -6,8 +6,10 @@ import me.synapz.paintball.Paintball;
 import me.synapz.paintball.arenas.*;
 import me.synapz.paintball.countdowns.PaintballCountdown;
 import me.synapz.paintball.enums.Messages;
+import me.synapz.paintball.enums.ServerType;
 import me.synapz.paintball.enums.Tag;
 import me.synapz.paintball.enums.Team;
+import me.synapz.paintball.players.ArenaPlayer;
 import me.synapz.paintball.storage.Settings;
 import org.bukkit.*;
 import org.bukkit.block.Banner;
@@ -360,6 +362,11 @@ public class Utils {
     - The state is not waiting
      */
     public static boolean canJoin(Player player, Arena arena) {
+        if (Settings.SERVER_TYPE != ServerType.NORMAL) {
+            Messenger.error(player, new MessageBuilder(Messages.CANNOT_JOIN_SERVER_TYPE).replace(Tag.SERVER_TYPE, Settings.SERVER_TYPE.toString()).build());
+            return false;
+        }
+
         Arena.ArenaState state = arena.getState();
 
         if (!player.hasPermission("paintball.join." + arena.getName()) && !player.hasPermission("paintball.join.*")) {
@@ -488,12 +495,14 @@ public class Utils {
     }
 
     // Shoots a Snowball with the correct speed
-    public static void shootSnowball(Player player, Arena arena, double accuracy) {
-        Projectile pr = player.launchProjectile(Snowball.class);
+    public static void shootSnowball(ArenaPlayer player, Arena arena, double accuracy, boolean allowPlayerAccuracy) {
+        Projectile pr = player.getPlayer().launchProjectile(Snowball.class);
 
+        if (allowPlayerAccuracy && player.getAccuracy() > 0) {
+            accuracy = player.getAccuracy();
+        }
 
-
-        Vector v = player.getLocation().getDirection();
+        Vector v = player.getPlayer().getLocation().getDirection();
         v.add(new Vector(Math.random() * accuracy - accuracy,Math.random() * accuracy - accuracy,Math.random() * accuracy - accuracy));
         v.subtract(new Vector(Math.random() * accuracy - accuracy,Math.random() * accuracy - accuracy,Math.random() * accuracy - accuracy));
         v.multiply(arena.SPEED);

@@ -1,11 +1,20 @@
 package me.synapz.paintball.commands.player;
 
+import me.synapz.paintball.Paintball;
 import me.synapz.paintball.arenas.Arena;
 import me.synapz.paintball.arenas.ArenaManager;
 import me.synapz.paintball.commands.TeamCommand;
 import me.synapz.paintball.enums.CommandType;
 import me.synapz.paintball.enums.Messages;
+import me.synapz.paintball.enums.ServerType;
+import me.synapz.paintball.enums.Tag;
+import me.synapz.paintball.storage.Settings;
+import me.synapz.paintball.utils.MessageBuilder;
 import me.synapz.paintball.utils.Messenger;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+
+import java.util.Arrays;
 
 public class Join extends TeamCommand {
 

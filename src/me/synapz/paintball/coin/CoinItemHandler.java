@@ -73,6 +73,16 @@ public class CoinItemHandler {
         return items;
     }
 
+    public List<CoinItem> getDefaultItems() {
+        return new ArrayList<CoinItem>() {{
+            for (CoinItem coinItem : CoinItemHandler.getHandler().getAllItems().values()) {
+                if (coinItem.isDefaultItem()) {
+                    add(coinItem);
+                }
+            }
+        }};
+    }
+
     public List<Items> getDuelWieldItems() {
         return duelWieldItems;
     }

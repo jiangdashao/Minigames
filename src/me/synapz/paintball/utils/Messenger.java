@@ -60,7 +60,7 @@ public class Messenger {
             info(sender, msg);
 
         if (sender instanceof Player)
-            TitleUtil.sendTitle(((Player) sender), Messages.PREFIX.getString(), msg);
+            MessageUtil.sendTitle(((Player) sender), Messages.PREFIX.getString(), msg, 10, 30, 10);
     }
 
     // Checks to see if a player has a permission, returns true if they do false if they don't
