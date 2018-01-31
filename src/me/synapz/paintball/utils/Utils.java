@@ -355,6 +355,20 @@ public class Utils {
         player.sendPluginMessage(Paintball.getInstance(), "BungeeCord", out.toByteArray());
     }
 
+    public static ItemStack makeItem(Material material, String title, List<String> lore) {
+        ItemStack item = new ItemStack(material);
+
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(title);
+        if (lore != null) {
+            meta.setLore(lore);
+        }
+
+        item.setItemMeta(meta);
+
+        return item;
+    }
+
     /*
     Checks to see if a player can join if
     - Already in the arena

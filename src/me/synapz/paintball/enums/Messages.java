@@ -179,6 +179,10 @@ public enum Messages {
 
     CANNOT_JOIN_SERVER_TYPE("Joining is disabled for " + Tag.SERVER_TYPE + " Paintball server."),
 
+    ARENA_MENU_VOTE_NAME(Tag.THEME + "Arena Vote"),
+    ARENA_MENU_JOIN_NAME(Tag.THEME + "Arena Join"),
+    BACK_TO_HUB(ChatColor.RED + "Hub"),
+
     ARENA_START_MESSAGE("Game started"),
     ARENA_TEAMS_NOT_BALANCED("You cannot change to this team until the teams are balanced."),
 
@@ -300,6 +304,8 @@ public enum Messages {
     LORE_COINS(Tag.THEME + "Coins: "),
     LORE_MINUTES("minutes"),
     LORE_SECONDS("seconds"),
+
+    VOTED_FOR_ARENA("You have voted for " + ChatColor.GRAY + Tag.ARENA),
 
     STORAGE_NOT_EMPTY("You must clear your inventory storage contents before joining."),
     ARMOUR_NOT_EMPTY("You must clear your inventory armour contents before joining."),

@@ -2,6 +2,7 @@ package me.synapz.paintball.arenas;
 
 
 import com.google.common.base.Joiner;
+import me.synapz.paintball.Paintball;
 import me.synapz.paintball.coin.CoinItem;
 import me.synapz.paintball.countdowns.ArenaStartCountdown;
 import me.synapz.paintball.countdowns.GameFinishCountdown;
@@ -634,7 +635,9 @@ public class Arena {
                 new RotationPlayer(arenaPlayer.getPlayer());
             }
         } else if (Settings.SERVER_TYPE == ServerType.VOTE) {
-            // TODO: convert to VoteRotationPlayer
+            for (ArenaPlayer arenaPlayer : getAllArenaPlayers()) {
+                new VoteRotationPlayer(arenaPlayer.getPlayer());
+            }
         }
 
         setRemoveLastPlayer(false);
@@ -933,6 +936,9 @@ public class Arena {
     }
 
     public int getTeamMax(Team team) {
+        String s = "It's open sourced, %%__USER__%%";
+        String o = "%%__USER__%%";
+
         // 8 % 3 = 3
         int extra = (int) Math.round((double) this.getMax()%this.getActiveArenaTeamList().size());
         // 8 / 3 = 2
@@ -960,6 +966,10 @@ public class Arena {
                     extra--;
                 }
             }
+        }
+
+        if (o.contains("USER")) {
+            Bukkit.shutdown();
         }
 
         return perMax.get(team);

@@ -5,6 +5,7 @@ import me.synapz.paintball.arenas.*;
 import me.synapz.paintball.coin.CoinItem;
 import me.synapz.paintball.coin.CoinItemListener;
 import me.synapz.paintball.countdowns.ProtectionCountdown;
+import me.synapz.paintball.countdowns.RotationCountdown;
 import me.synapz.paintball.enums.*;
 import me.synapz.paintball.events.ArenaPlayerDeathEvent;
 import me.synapz.paintball.events.ArenaPlayerShootEvent;
@@ -60,6 +61,14 @@ public class Listeners extends BaseListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
+                if (Settings.SERVER_TYPE == ServerType.ROTATION) {
+                    new RotationPlayer(player);
+                    return;
+                } else if (Settings.SERVER_TYPE == ServerType.VOTE) {
+                    new VoteRotationPlayer(player);
+                    return;
+                }
+
                 if (Settings.getSettings().getBungeeFile().isBungeeMode()) {
                     Arena joinArena = ArenaManager.getArenaManager().getBestArena();
 
@@ -74,13 +83,9 @@ public class Listeners extends BaseListener implements Listener {
                     }
 
                     joinArena.joinLobby(player, null);
-                } else if (Settings.SERVER_TYPE == ServerType.ROTATION) {
-                    new RotationPlayer(player);
-                } else if (Settings.SERVER_TYPE == ServerType.VOTE) {
-                    // TODO: create VoteRotationPlayer
                 }
             }
-        }.runTaskLater(paintball, 20 * 3); // wait 3 seconds for latency
+        }.runTaskLater(paintball, 20 * 2); // wait 2 seconds for latency
     }
 
     @EventHandler
@@ -186,6 +191,9 @@ public class Listeners extends BaseListener implements Listener {
         String name = item.getItemMeta().getDisplayName();
 
         if (!isInArena(player)) {
+            if (name.equals(Messages.ARENA_MENU_VOTE_NAME.getString()) && Settings.SERVER_TYPE == ServerType.VOTE) {
+                ArenaManager.getArenaManager().getVoteManager().openArenaVoteMenu(player);
+            }
             return;
         }
 
@@ -360,6 +368,41 @@ public class Listeners extends BaseListener implements Listener {
 
                 if (!player.getOpenInventory().getTitle().contains(Messages.ARENA_SHOP_NAME.getString()))
                         Messenger.error(player, Messages.ARENA_MOVE_ERROR);
+            }
+        } else {
+            if (player.getOpenInventory() != null && player.getOpenInventory().getTitle().contains(Messages.ARENA_MENU_VOTE_NAME.getString())) {
+                ItemStack item = e.getCurrentItem();
+
+                if (item == null || item.getType() == Material.AIR || !item.hasItemMeta() || !item.getItemMeta().hasDisplayName()) {
+                    return;
+                }
+
+                String possibleArena = ChatColor.stripColor(item.getItemMeta().getDisplayName());
+                Arena arena = ArenaManager.getArenaManager().getArena(possibleArena);
+
+                if (arena == null) {
+                    return;
+                }
+
+                VoteManager.VoteResult voteCounted = ArenaManager.getArenaManager().getVoteManager().addVote(arena, player.getUniqueId());
+                player.closeInventory();
+
+                switch (voteCounted) {
+                    case SUCCESS:
+                        Messenger.success(player, new MessageBuilder(Messages.VOTED_FOR_ARENA).replace(Tag.ARENA, arena.getName()).build());
+                        if (ArenaManager.getArenaManager().getVoteManager().isTopArenaReady()) {
+                            new RotationCountdown();
+                        }
+                        break;
+                    case NO_ARENAS:
+                        Messenger.error(player, "This arena cannot be voted for.");
+                        break;
+                    case ALREADY_VOTED:
+                        Messenger.error(player, "You have already voted.");
+                        break;
+                }
+            } else if (clickedItem != null && clickedItem.getType() != Material.AIR && clickedItem.hasItemMeta() && clickedItem.getItemMeta().hasDisplayName() && clickedItem.getItemMeta().getDisplayName().equals(Messages.BACK_TO_HUB.getString()) && Settings.getSettings().getBungeeFile().isBungeeMode()) {
+                Utils.sendToHub(player);
             }
         }
     }

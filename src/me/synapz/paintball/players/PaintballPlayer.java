@@ -3,6 +3,7 @@ package me.synapz.paintball.players;
 import me.synapz.paintball.Paintball;
 import me.synapz.paintball.arenas.Arena;
 import me.synapz.paintball.enums.Messages;
+import me.synapz.paintball.enums.ServerType;
 import me.synapz.paintball.enums.Team;
 import me.synapz.paintball.events.ArenaLeaveEvent;
 import me.synapz.paintball.scoreboards.GameScoreboard;
@@ -165,6 +166,12 @@ public abstract class PaintballPlayer {
         // TeamExtreme Party Compat
         Paintball.getInstance().getBungeeManager().updatePartyScoreboard(player.getName());
         Utils.sendToHub(player);
+
+        if (Settings.SERVER_TYPE == ServerType.ROTATION) {
+            new RotationPlayer(player);
+        } else if (Settings.SERVER_TYPE == ServerType.VOTE) {
+            new VoteRotationPlayer(player);
+        }
     }
 
     public void updateDisplayName() {

@@ -5,6 +5,7 @@ import me.synapz.paintball.arenas.ArenaManager;
 import me.synapz.paintball.countdowns.ArenaStartCountdown;
 import me.synapz.paintball.countdowns.RotationCountdown;
 import me.synapz.paintball.enums.Messages;
+import me.synapz.paintball.enums.ServerType;
 import me.synapz.paintball.enums.Team;
 import me.synapz.paintball.storage.PlayerData;
 import me.synapz.paintball.storage.Settings;
@@ -47,6 +48,18 @@ public class RotationPlayer {
 
         if (nextArena == null) {
             Messenger.error(player, "No arenas to join.");
+            return;
+        }
+
+        if (Settings.SERVER_TYPE == ServerType.VOTE) {
+            rotationPlayers.put(player.getName(), this);
+
+            Messenger.success(player, "Open the Vote Menu to choose an arena");
+
+            if (ArenaManager.getArenaManager().getVoteManager().isTopArenaReady()) {
+                new RotationCountdown();
+            }
+
             return;
         }
 
@@ -93,7 +106,6 @@ public class RotationPlayer {
                 int size = rotationPlayers.values().size();
 
                 Messenger.success(player, "Next arena is " + ChatColor.GRAY + nextArena.getName());
-
 
                 if (size >= nextArena.getMin()) {
                     new RotationCountdown();

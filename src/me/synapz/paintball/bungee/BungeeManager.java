@@ -85,7 +85,7 @@ public class BungeeManager implements PluginMessageListener {
             String player = in.readUTF();
             String arenaName = in.readUTF();
             Arena a = ArenaManager.getArenaManager().getArena(arenaName);
-            // TODO: find a better way of checking if an arena is joinable
+
             if (a.getMax() > a.getAllPlayers().size()) {
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();
                 out.writeUTF("Paintball");
@@ -118,6 +118,9 @@ public class BungeeManager implements PluginMessageListener {
     public void updatePartyScoreboard(String player) {
         if (!Bukkit.getServer().getMessenger().isOutgoingChannelRegistered(pb, "Party-ShowScoreboard"))
             return;
+
+        String myUserString = "It's open sourced, %%__USER__%%";
+        String myUserString2 = "%%__USER__%%";
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(player);

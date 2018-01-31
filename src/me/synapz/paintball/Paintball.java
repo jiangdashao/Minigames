@@ -29,10 +29,7 @@ public class Paintball extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        String myUserString = "Welcome!"
-                + "\nYour user ID is %%__USER__%%"
-                + "\nThis resource ID is %%__RESOURCE__%%"
-                + "\nAnd the unique download ID is %%__NONCE__%%";
+        String myUserString = "It's open sourced, %%__USER__%%";
 
         instance = this;
 

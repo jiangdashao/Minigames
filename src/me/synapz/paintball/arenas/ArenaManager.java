@@ -5,21 +5,30 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.google.common.base.Joiner;
 import me.synapz.paintball.Paintball;
 import me.synapz.paintball.enums.Messages;
+import me.synapz.paintball.enums.ServerType;
 import me.synapz.paintball.enums.StatType;
 import me.synapz.paintball.enums.Tag;
 import me.synapz.paintball.locations.SignLocation;
 import me.synapz.paintball.locations.SkullLocation;
+import me.synapz.paintball.players.RotationPlayer;
 import me.synapz.paintball.storage.Settings;
 import me.synapz.paintball.utils.MessageBuilder;
+import me.synapz.paintball.utils.MessageUtil;
 import me.synapz.paintball.utils.Messenger;
+import me.synapz.paintball.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.bukkit.ChatColor.*;
 
@@ -30,6 +39,7 @@ public class ArenaManager {
     private Map<String, Arena> arenas = new HashMap<>();
 
     private Arena nextArena;
+    private VoteManager voteManager;
 
     private ArenaManager() {
 
@@ -148,9 +158,16 @@ public class ArenaManager {
 
     public void clearNextArena() {
         nextArena = null;
+        if (getVoteManager() != null) {
+            getVoteManager().reset();
+        }
     }
 
     public Arena getNextArena() {
+        if (Settings.SERVER_TYPE == ServerType.VOTE) {
+            return getVoteManager().getTopArena();
+        }
+
         if (nextArena == null) {
             Collections.shuffle(new ArrayList<>(arenas.values()));
             for (Arena arena : getArenas().values()) {
@@ -161,6 +178,14 @@ public class ArenaManager {
         }
 
         return nextArena;
+    }
+
+    public VoteManager getVoteManager() {
+        if (voteManager == null && Settings.SERVER_TYPE == ServerType.VOTE) {
+            voteManager = new VoteManager();
+        }
+
+        return voteManager;
     }
 
     // Updates every type of sign (Leaderboard, Join, Autojoin)
